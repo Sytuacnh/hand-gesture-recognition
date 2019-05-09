@@ -1,17 +1,28 @@
+# v0
 # 10 people
 # each 10 class
 # target: 1000 samples
 # 10 people
 # each class 10 images
 
+# v1 <- now
+# 10 people
+# each 10 class
+# target: 900 samples
+# 4 classes: OK, Fist, thumb, L
+# ['03_fist', '07_ok', '05_thumb', '02_l']
+# each class 250 samples from 10 people
+# 25 from each class of each person
+
 import cv2
 import os, random, shutil
 import glob as gb
 import numpy as np
 
+targetLabels = set(['03_fist', '07_ok', '05_thumb', '02_l'])
 star = '/*'
 tarDir = '/Users/sytu/Desktop/data_project/output_dataset'
-pickNumber = 10
+pickNumber = 25
 
 threshold = 60  # binary threshold
 blurValue = 41  # GaussianBlur parameter
@@ -20,8 +31,8 @@ learningRate = 0
 
 bgModel = cv2.createBackgroundSubtractorMOG2(0, bgSubThreshold)
 
-def pick_by_number(fileDir, tarDir, pickNumber, labelName):
-    pathDir = os.listdir(fileDir) # all files in fileDir
+def pick_by_number(imgDir, tarDir, pickNumber, labelName):
+    pathDir = os.listdir(imgDir) # all files in imgDir
     # percentage
     # filenumber = len(pathDir) # number of files
     # rate = 0.1    # set percentage
@@ -29,10 +40,10 @@ def pick_by_number(fileDir, tarDir, pickNumber, labelName):
     img_samples = random.sample(pathDir, pickNumber)  # randomly pick pickNumber files
     assert len(img_samples) is pickNumber, 'length does not match'
     for img_name in img_samples:
-        imgPath = fileDir + '/' + img_name
+        imgPath = imgDir + '/' + img_name
         destPath = tarDir + '/' + labelName + '-' + img_name
         bit_n_save_image(imgPath, destPath)
-        # shutil.move(fileDir+'/'+name, tarDir+'/'+labelName+'-'+name) # directly copy to destination
+        # shutil.move(imgDir+'/'+name, tarDir+'/'+labelName+'-'+name) # directly copy to destination
 
 
 def remove_background(img):
@@ -69,9 +80,10 @@ def main():
     for sample in samples:
         for labelDir in gb.glob(sample+star):
             labelName = os.path.basename(labelDir) # folder(label) name
-            pick_by_number(labelDir, tarDir, pickNumber, labelName)
+            if labelName in targetLabels:
+                pick_by_number(labelDir, tarDir, pickNumber, labelName)
 
-    print("Finished images selection and conversion.")
+    print("\nFinished images selection and conversion.")
     print("Image size: " + str(len(gb.glob(tarDir+star))))
 
 if __name__ == '__main__':
