@@ -1,3 +1,20 @@
+# go through every image and convert it of them to be BB, and store each output image
+# label every image by its category and boxes
+    # using labelImg: https://github.com/tzutalin/labelImg
+    # https://blog.csdn.net/zhl493722771/article/details/82781547
+    # 900张图像
+# convert dataset to  Passcal VOC2012
+# design SSD in Pytorch
+# pass into Pytorh
+# train & tune
+# obtain the first model
+# try out in Opencv
+# achieve real-time recognition and classification
+# create Flask API
+    # decide real-time web camera or upload an image
+
+
+
 import cv2
 import numpy as np
 
@@ -17,7 +34,7 @@ def remove_background(frame):
     return res
 
 # contour extraction and Binarization 
-def bit_contour(frame):
+def bit_contour(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (blurValue, blurValue), 0)
     ret, res = cv2.threshold(blur, threshold, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
