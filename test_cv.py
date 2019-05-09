@@ -1,8 +1,6 @@
 # go through every image and convert it of them to be BB, and store each output image
 # label every image by its category and boxes
     # using labelImg: https://github.com/tzutalin/labelImg
-    # https://blog.csdn.net/zhl493722771/article/details/82781547
-    # 900张图像
 # convert dataset to  Passcal VOC2012
 # design SSD in Pytorch
 # pass into Pytorh
@@ -13,6 +11,11 @@
 # create Flask API
     # decide real-time web camera or upload an image
 
+# approach 2
+# collect own dataset
+
+# approach 3
+# use other dataset: Microsoft Kinect and Leap Motion
 
 
 import cv2
@@ -44,16 +47,27 @@ def bit_contour(img):
     # ret, res = cv2.threshold(th3, 70, 255, cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
     return res
 
-img = cv2.imread("/Users/sytu/Desktop/data_project/leapGestRecog/04/05_thumb/frame_04_05_0005.png")
-img = cv2.bilateralFilter(img, 5, 50, 100)  # smoothing
-img = remove_background(img)
-img = bit_contour(img)
+# img = cv2.imread("/Users/sytu/Desktop/data_project/leapGestRecog/04/05_thumb/frame_04_05_0005.png")
 
-while True:
+
+camera = cv2.VideoCapture(0)
+
+while camera.isOpened():
+    ret, img = camera.read()
+    # img = cv2.bilateralFilter(img, 5, 50, 100)  # smoothing
+    # img = remove_background(img)
+    # img = bit_contour(img)
     cv2.imshow('img', img)
 
-    if cv2.waitKey(1) is ord('q'):
-        break
+    k = cv2.waitKey(10)
+
+    if k == 32: # if spacebar pressed
+        img = np.stack((img,)*3, axis=-1)
+        img = cv2.resize(img, (224, 224))
+        img = img.reshape(1, 224, 224, 3)
+        cv2.imshow('img', img)
+    elif cv2.waitKey(1) is ord('q'):
+            break
 # testing kaggle dataset
 # img = cv2.imread("/Users/sytu/Desktop/data_project/leapGestRecog/06/10_down/frame_06_10_0012.png")
 
