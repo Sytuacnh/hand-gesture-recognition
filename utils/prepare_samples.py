@@ -6,7 +6,7 @@
 
 # target: 560 samples
 # 4 classes: 
-#   fist, OK, rock, five
+#   fist, peace, love, five
 #   ['G1', 'G5', 'G8', 'G9']
 # each class 140 samples
 # 10 images from each class of each person
@@ -39,7 +39,7 @@ def pick_img(imgDir, tarDir, pickNumber, labelName, pIndex):
         img_samples = [p for p in allFiles if picType in p]
         # print(len(img_samples))
     else:
-        img_samples = random.sample(allFiles, pickNumber)  # randomly pick pickNumber files
+        img_samples = random.sample(allFiles, pickNumber)
         assert len(img_samples) is pickNumber, 'number does not match'
 
     for img_name in img_samples:
