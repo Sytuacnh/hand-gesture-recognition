@@ -93,11 +93,9 @@ class MultiBoxLoss(nn.Module):
         batch_conf = conf_data.view(-1, self.num_classes)
         loss_c = log_sum_exp(batch_conf) - batch_conf.gather(1, conf_t.view(-1, 1))
 
-
         # Hard Negative Mining
         loss_c = loss_c.view(num, -1)
         loss_c[pos] = 0  # filter out pos boxes for now
-
         _, loss_idx = loss_c.sort(1, descending=True)
         _, idx_rank = loss_idx.sort(1)
         num_pos = pos.long().sum(1, keepdim=True)
@@ -117,7 +115,7 @@ class MultiBoxLoss(nn.Module):
         N = num_pos.data.sum().double()
         loss_l = loss_l.double()
         loss_c = loss_c.double()
-
+        
         loss_l /= N
         loss_c /= N
         return loss_l, loss_c

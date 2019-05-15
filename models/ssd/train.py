@@ -145,10 +145,7 @@ def train():
     data_loader = data.DataLoader(dataset, args.batch_size,
                                   num_workers=args.num_workers,
                                   shuffle=True, collate_fn=detection_collate,
-                                  # pin_memory=False)
-                                  pin_memory=True) # in GPU?
-
-
+                                  pin_memory=True)
     # create batch iterator
     batch_iterator = iter(data_loader)
     for iteration in range(args.start_iter, cfg['max_iter']):
@@ -171,7 +168,7 @@ def train():
         except StopIteration:
             batch_iterator = iter(data_loader)
             images, targets = next(batch_iterator)
-            
+
         if args.cuda:
             images = Variable(images.cuda())
             targets = [Variable(ann.cuda(), volatile=True) for ann in targets]
@@ -190,17 +187,13 @@ def train():
         t1 = time.time()
         # loc_loss += loss_l.data[0]
         # conf_loss += loss_c.data[0]
-
-        # if iteration % 10 == 0:
-        #     print('timer: %.4f sec.' % (t1 - t0))
-        #     print('iter ' + repr(iteration) + ' || Loss: %.4f ||' % (loss.data[0]), end=' ')
         loc_loss += loss_l.data
         conf_loss += loss_c.data
-         
+
         if iteration % 10 == 0:
             print('timer: %.4f sec.' % (t1 - t0))
-#loss.data[0]
             print('iter ' + repr(iteration) + ' || Loss: %.4f ||' % (loss.data), end=' ')
+            # print('iter ' + repr(iteration) + ' || Loss: %.4f ||' % (loss.data[0]), end=' ')
 
         if args.visdom:
             update_vis_plot(iteration, loss_l.data[0], loss_c.data[0],
