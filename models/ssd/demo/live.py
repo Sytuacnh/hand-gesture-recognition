@@ -6,6 +6,9 @@ import time
 from imutils.video import FPS, WebcamVideoStream
 import argparse
 
+save_video_to_frame = True
+
+savePath = "./frames/"
 parser = argparse.ArgumentParser(description='Single Shot MultiBox Detection')
 parser.add_argument('--weights', default='weights/ssd_300_VOC0712.pth',
                     type=str, help='Trained state_dict file path')
@@ -15,7 +18,7 @@ args = parser.parse_args()
 
 COLORS = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
 FONT = cv2.FONT_HERSHEY_SIMPLEX
-
+windowsName = "Hand Gesture Detection by Stanley Lin - v0.1"
 
 def cv2_demo(net, transform):
     def predict(frame):
@@ -43,6 +46,7 @@ def cv2_demo(net, transform):
     print("[INFO] starting threaded video stream...")
     stream = WebcamVideoStream(src=0).start()  # default camera
     time.sleep(1.0)
+    cnt = 0
     # start fps timer
     # loop over frames from the video file stream
     while True:
@@ -61,8 +65,10 @@ def cv2_demo(net, transform):
                 cv2.imshow('frame', frame)
                 if key2 == ord('p'):  # resume
                     break
-        cv2.imshow('frame', frame)
-        if key == 27:  # exit
+        cv2.imshow(windowsName, frame)
+        cv2.imwrite(savePath + str(cnt) + '.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY),100])
+        cnt = cnt + 1
+        if key == 27:  # exit ESC
             break
 
 
@@ -74,8 +80,9 @@ if __name__ == '__main__':
     from data import BaseTransform, VOC_CLASSES as labelmap
     from ssd import build_ssd
 
-    net = build_ssd('test', 300, 21)    # initialize SSD
-    net.load_state_dict(torch.load(args.weights))
+    net = build_ssd('test', 300, 5)    # initialize SSD
+    # net = build_ssd('test', 300, 21)    # initialize SSD
+    net.load_state_dict(torch.load(args.weights, 'cpu'))
     transform = BaseTransform(net.size, (104/256.0, 117/256.0, 123/256.0))
 
     fps = FPS().start()
